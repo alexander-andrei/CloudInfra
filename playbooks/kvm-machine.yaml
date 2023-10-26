@@ -1,0 +1,29 @@
+---
+- name: Create a KVM virtual machine
+  hosts: general_hosts
+  tasks:
+    - name: Ensure the VM is not already running
+      virt:
+        name: my_vm
+        state: shutdown
+        autostart: no
+
+    - name: Define the VM's configuration
+      virt:
+        name: my_vm
+        state: defined
+        memory: 1024
+        vcpus: 2
+        graphics: none
+        virt_type: kvm
+        disk: /var/lib/libvirt/images/my_vm.qcow2
+        network:
+          - network=default
+        cloud_init:
+          user_data: |
+            # cloud-init user data here
+
+    - name: Create and start the VM
+      virt:
+        name: my_vm
+        state: running
